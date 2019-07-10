@@ -34,6 +34,7 @@ import { Option } from './entities/option';
 
 // Camadas MapG
 import TileLayer from 'ol/layer/Tile.js';
+import TileWMS from 'ol/source/TileWMS';
 import { OSM } from 'ol/source.js';
 
 @Component({
@@ -96,6 +97,29 @@ export class MapComponent implements OnInit {
   maxDate: Date;
   invalidDates: Array<Date>;
 
+  // Controle do gráfico
+  private start: Date = new Date(2018,0,31);
+  private end: Date = new Date(2018,0,31);
+  private analysis = new TileLayer({
+    title : "Análise Merge Monthly",
+    visible: true,
+    source: new TileWMS({
+      url: this.geoserverTerraMaLocal,
+      params: {
+        'LAYERS': 'terrama2_87:view87',
+        'VERSION': '1.1.1',
+        'FORMAT': 'image/png',
+        'EPSG': '4326',
+        'TILED': true,
+        'TIME' : '2018-01-31'
+      },
+      preload: Infinity,
+      projection: 'EPSG:4326',
+      serverType: 'geoserver',
+      name: 'terrama2_87:view87'
+    })
+  });
+
   // Banco de dados
   private jsonObj;
 
@@ -134,11 +158,11 @@ export class MapComponent implements OnInit {
   initDadosGrafico() {
     console.log(this.citySelectedAPI.geocodigo);
     this.setViewMapG();
-    this.wmsService.getRecort(this.layersDynamic[2].getTileLayer(),this.citySelectedAPI.geocodigo);
-    // Automatizar
-    let data = new Date();
-    data.setDate(31); data.setMonth(0); data.setFullYear(this.mergeYearlyDate);
-    this.wmsService.upDate(this.layersDynamic[2].getTileLayer(),this.layers[5].date);
+    this.wmsService.getRecort(this.analysis,'geocodigo',this.citySelectedAPI.geocodigo);
+    let days = [31,28,31,30,31,30,31,31,30,31,30,31];
+    this.start.setDate(days[this.start.getMonth()]);
+    this.wmsService.upDate(this.analysis,this.start);
+    console.log(this.start.getDate());
     // =======================================
     this.apiFlask.getMergeMonthlyMaxMeanDiff(this.citySelectedAPI.geocodigo,this.mergeYearlyDate).subscribe( (data: AnaliseGeotiffByYearDiff) => {
       this.dataGraficoMediaAnomalia = {
@@ -264,8 +288,7 @@ export class MapComponent implements OnInit {
           source: new OSM(),
           layer: 'osm',
         }),
-        this.layersDynamic[1].getTileLayer(),
-        this.layersDynamic[2].getTileLayer()
+        this.analysis
       ],
       target: 'mapG',
       view: new View({

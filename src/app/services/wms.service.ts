@@ -36,11 +36,15 @@ export class WmsService {
     return this.features;
   }
 
-  getRecort(tileLayer:TileLayer, geocodigo:string){
-    tileLayer.getSource().updateParams({ 'cql_filter' : ('cd_geocmu=').concat(geocodigo)});
+  getRecort(tileLayer:TileLayer, param: string, value:string){
+    tileLayer.getSource().updateParams({ 'cql_filter' : (param + '=').concat(value)});
   }
 
   upDate(tileLayer:TileLayer, date: Date){
+    tileLayer.getSource().updateParams({'TIME' : date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()});
+  }
+
+  upDateMonth(tileLayer:TileLayer, date: Date){
     tileLayer.getSource().updateParams({'TIME' : date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()});
   }
 }

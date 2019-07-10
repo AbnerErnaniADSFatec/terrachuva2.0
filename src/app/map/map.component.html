@@ -248,7 +248,22 @@
     <h4 style="font-weight:normal">Busca de Dados</h4>
     <div class="ui-g">
         <div class="ui-g-2">
-            <p-calendar [(ngModel)]="date1" [showIcon]="true"></p-calendar>
+            <p-calendar 
+                [(ngModel)] = "start"
+                [showIcon] = "true"
+                view = "month"
+                dateFormat = "dd/mm/yy"
+                (onChange) = "initDadosGrafico()"
+            ></p-calendar>
+        </div>
+        <div class="ui-g-2">
+            <p-calendar
+                [(ngModel)] = "end"
+                [showIcon] = "true"
+                view = "month"
+                dateFormat = "dd/mm/yy"
+                (onChange) = "initDadosGrafico()"
+            ></p-calendar>
         </div>
         <div class="ui-g-2">
             <input type = "number" min = "2015" max = "2018" [(ngModel)] = "mergeYearlyDate" placeholder = "Ano">
