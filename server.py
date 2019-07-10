@@ -31,7 +31,6 @@ CORS(app)
 def hello():
     return jsonify({'text':'Hello World!!!'})
 
-# Análise Mensal
 class An_Monthly(Resource):
     def get(self, geocodigo, ano):
         try:
