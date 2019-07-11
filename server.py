@@ -64,7 +64,7 @@ class An_Merge_Monthly_Diff(Resource):
 class CitiesByState(Resource):
     def get(self, uf):
         try:
-            conectar = Connection_pg("merge_monthly")
+            conectar = Connection_pg("merge_monthly") # Connection_pg("chuva")
             data = conectar.readFileSQL("sql/cities_by_state",{'uf':str(uf).upper()})
             print(data)
             return jsonify(data.to_dict())
