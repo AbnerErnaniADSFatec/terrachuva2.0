@@ -173,8 +173,8 @@ export class MapComponent implements OnInit {
               this.citySelectedAPI.nome1 +
               " - " +
               this.ufSelectedAPI.estado,
-            backgroundColor:'#007bff',
-            borderColor: '#55a7ff',
+            backgroundColor: this.apiFlask.convertToColors(data.var_media),
+            borderColor: this.apiFlask.convertToColors(data.var_media),
             data: this.apiFlask.convertToArray(data.var_media)
           }
         ]
@@ -187,8 +187,8 @@ export class MapComponent implements OnInit {
               this.citySelectedAPI.nome1 +
               " - " +
               this.ufSelectedAPI.estado,
-            backgroundColor:'#007bff',
-            borderColor: '#55a7ff',
+            backgroundColor: this.apiFlask.convertToColors(data.var_maxima),
+            borderColor: this.apiFlask.convertToColors(data.var_maxima),
             data: this.apiFlask.convertToArray(data.var_maxima)
           }
         ]

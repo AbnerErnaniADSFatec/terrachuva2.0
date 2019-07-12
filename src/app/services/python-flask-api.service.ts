@@ -14,6 +14,7 @@ import { CityByStateUnique } from '../map/entities/city-by-state-unique';
 
 export class PythonFlaskAPIService{
   private localhost = 'http://localhost:4863';
+  private colors = {'blue':'#007bff','red':'#ff2f00'};
   constructor( private httpClient: HttpClient ) {}
 
   getMonthlyMaxMean(geocodigo: string, ano: number){
@@ -39,6 +40,15 @@ export class PythonFlaskAPIService{
   convertToArray(obj: Object){
     let vetor = [];
     for( let i = 0; obj[i] != null; i++ ){ vetor[i] = obj[i]; }
+    return vetor;
+  }
+
+  convertToColors(obj: Object){
+    let vetor = [];
+    for( let  i = 0; obj[i] != null; i++){
+      if( obj[i] < 0) { vetor[i] = this.colors['red'] }
+      else { vetor[i] = this.colors['blue'] }
+    }
     return vetor;
   }
 
