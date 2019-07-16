@@ -91,15 +91,14 @@ export class MapComponent implements OnInit {
   testep: boolean = false;
   setMap: string = 'osm';
   mergeMonthlyDate: number = 1;
-  mergeYearlyDate: number = 2015;
 
   minDate: Date;
   maxDate: Date;
   invalidDates: Array<Date>;
 
   // Controle do gráfico
-  private start: Date = new Date(2018,0,31);
-  private end: Date = new Date(2018,0,31);
+  private start: Date = new Date(2015,0,1);
+  private end: Date = new Date(2015,0,1);
   private analysis = new TileLayer({
     title : "Análise Merge Monthly",
     visible: true,
@@ -164,12 +163,12 @@ export class MapComponent implements OnInit {
     this.wmsService.upDate(this.analysis,this.start);
     console.log(this.start.getDate());
     // =======================================
-    this.apiFlask.getMergeMonthlyMaxMeanDiff(this.citySelectedAPI.geocodigo,this.mergeYearlyDate).subscribe( (data: AnaliseGeotiffByYearDiff) => {
+    this.apiFlask.getMergeMonthlyMaxMeanDiff(this.citySelectedAPI.geocodigo,this.end.getFullYear()).subscribe( (data: AnaliseGeotiffByYearDiff) => {
       this.dataGraficoMediaAnomalia = {
         labels: this.apiFlask.convertToArray(data.mes),
         datasets: [
           {
-            label: 'Diferença Média ' + this.mergeYearlyDate + ' do Município de ' +
+            label: 'Diferença Média ' + this.start.getFullYear() + ' - ' + this.end.getFullYear() +' do Município de ' +
               this.citySelectedAPI.nome1 +
               " - " +
               this.ufSelectedAPI.estado,
@@ -183,7 +182,7 @@ export class MapComponent implements OnInit {
         labels: this.apiFlask.convertToArray(data.mes),
         datasets: [
           {
-            label: 'Diferença Máxima ' + this.mergeYearlyDate + ' do Município de ' +
+            label: 'Diferença Máxima ' + this.start.getFullYear() + ' - ' + this.end.getFullYear() +' do Município de ' +
               this.citySelectedAPI.nome1 +
               " - " +
               this.ufSelectedAPI.estado,
@@ -194,7 +193,7 @@ export class MapComponent implements OnInit {
         ]
       };
     });
-    this.apiFlask.getMonthlyMaxMean(this.citySelectedAPI.geocodigo,this.mergeYearlyDate).subscribe( (data: AnaliseGeotiffByYear) => {
+    this.apiFlask.getMonthlyMaxMean(this.citySelectedAPI.geocodigo,this.start.getFullYear()).subscribe( (data: AnaliseGeotiffByYear) => {
       this.dataGraficoMediaMensal = {
         labels: this.apiFlask.convertToArray(data.mes),
         datasets: [
@@ -208,7 +207,7 @@ export class MapComponent implements OnInit {
             data: this.apiFlask.convertToArray(data.media)
           },
           {
-            label: 'Média ' + this.mergeYearlyDate + ' Mensal do Município de ' +
+            label: 'Média ' + this.start.getFullYear() + ' - ' + this.end.getFullYear() +' Mensal do Município de ' +
               this.apiFlask.convertToArray(data.nome_municipio)[0].toString() +
               " - " +
               this.ufSelectedAPI.estado,
@@ -231,7 +230,7 @@ export class MapComponent implements OnInit {
             data: this.apiFlask.convertToArray(data.maxima)
           },
           {
-            label: 'Máxima ' + this.mergeYearlyDate + ' Mensal do Município de ' + 
+            label: 'Máxima ' + this.start.getFullYear() + ' - ' + this.end.getFullYear() +' Mensal do Município de ' + 
               this.apiFlask.convertToArray(data.nome_municipio)[0].toString() +
               " - " +
               this.ufSelectedAPI.estado,
@@ -242,6 +241,8 @@ export class MapComponent implements OnInit {
         ]
       };
     });
+
+
     this.changeChartType();
   }
 

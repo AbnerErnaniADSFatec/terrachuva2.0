@@ -13,7 +13,7 @@ import { CityByStateUnique } from '../map/entities/city-by-state-unique';
 })
 
 export class PythonFlaskAPIService{
-  private localhost = 'http://150.163.17.147:4863'; // 'http://localhost:4863';
+  private localhost = 'http://localhost:4863';
   private colors = {'blue':'#007bff','red':'#ff2f00'};
   constructor( private httpClient: HttpClient ) {}
 

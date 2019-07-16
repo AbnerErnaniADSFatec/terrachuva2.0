@@ -248,33 +248,35 @@
     <h4 style="font-weight:normal">Busca de Dados</h4>
     <div class="ui-g">
         <div class="ui-g-2">
+            <h6 style = "font-weight:normal">Data Início</h6>
             <p-calendar 
                 [(ngModel)] = "start"
                 [showIcon] = "true"
                 view = "month"
-                dateFormat = "dd/mm/yy"
+                dateFormat = "MM / yy"
                 (onChange) = "initDadosGrafico()"
             ></p-calendar>
         </div>
         <div class="ui-g-2">
+            <h6 style = "font-weight:normal">Data Fim</h6>
             <p-calendar
                 [(ngModel)] = "end"
                 [showIcon] = "true"
                 view = "month"
-                dateFormat = "dd/mm/yy"
+                dateFormat = "MM / yy"
                 (onChange) = "initDadosGrafico()"
             ></p-calendar>
         </div>
         <div class="ui-g-2">
-            <input type = "number" min = "2015" max = "2018" [(ngModel)] = "mergeYearlyDate" placeholder = "Ano">
-        </div>
-        <div class="ui-g-2">
+            <h6 style = "font-weight: normal">Estado</h6>
             <p-dropdown [options] = "ufsAPI" (onChange) = "configSelectDataGrafico()" [(ngModel)] = "ufSelectedAPI" placeholder = "Select a State" optionLabel = "estado" [showClear] = "true" [filter] = "true"></p-dropdown>
         </div>
         <div class="ui-g-2">
+            <h6 style = "font-weight: normal">Cidade</h6>
             <p-dropdown [options] = "citiesAPI" (onChange) = "initDadosGrafico()" [(ngModel)] = "citySelectedAPI" placeholder = "Select a City" optionLabel = "nome1" [showClear] = "true" [filter] = "true"></p-dropdown>
         </div>
         <div class="ui-g-2">
+            <h6 style = "font-weight: normal">Variável</h6>
             <p-dropdown [options] = "chartOption" (onChange) = "changeChartType()" [(ngModel)] = "selectChartOption" placeholder = "Select a Option" optionLabel = "verbose" [showClear] = "true"></p-dropdown>
         </div>
         <div class="ui-g-2">
