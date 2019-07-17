@@ -22,7 +22,9 @@ import { PythonFlaskAPIService } from 'src/app/services/python-flask-api.service
 
 // Interfaces Criadas
 import { AnaliseGeotiffByYear } from './rasters/analise-geotiff-by-year';
+import { AnaliseGeotiffLimitDate } from './rasters/analise-geotiff-limit-date';
 import { AnaliseGeotiffByYearDiff } from './rasters/analise-geotiff-by-year-diff';
+import { AnaliseGeotiffDiffLimitDate } from './rasters/analise-geotiff-diff-limit-date';
 import { AnaliseGeotiff } from './rasters/analise-geotiff';
 import { CityByState } from './entities/city-by-state';
 import { CityByStateUnique } from './entities/city-by-state-unique';
@@ -65,11 +67,6 @@ export class MapComponent implements OnInit {
     "Mensal": NaN,
     "Anomalia": NaN
   };
-
-  private dataGraficoMediaMensal: any;
-  private dataGraficoMaximaMensal: any;
-  private dataGraficoMediaAnomalia: any;
-  private dataGraficoMaximaAnomalia: any;
 
   // Busca de cidades via codigo no python API
   private citySelectedAPI: CityByStateUnique;
@@ -142,11 +139,9 @@ export class MapComponent implements OnInit {
     this.mapService.listar().toPromise()
       .then((data: any) => {
         // console.time('request-length');
-        console.log(data);
         // console.timeEnd('request-length');
         this.jsonObj = data;
         data.forEach(element => {
-          console.log(element)
           this.features[element.name] = this.wmsService.camadas(element);
           this.map.addLayer(this.features[element.name]);
           this.mapG.addLayer(this.features[element.name]);
@@ -155,95 +150,105 @@ export class MapComponent implements OnInit {
   }
 
   initDadosGrafico() {
-    console.log(this.citySelectedAPI.geocodigo);
     this.setViewMapG();
     this.wmsService.getRecort(this.analysis,'geocodigo',this.citySelectedAPI.geocodigo);
     let days = [31,28,31,30,31,30,31,31,30,31,30,31];
     this.start.setDate(days[this.start.getMonth()]);
     this.wmsService.upDate(this.analysis,this.start);
-    console.log(this.start.getDate());
-    // =======================================
-    this.apiFlask.getMergeMonthlyMaxMeanDiff(this.citySelectedAPI.geocodigo,this.end.getFullYear()).subscribe( (data: AnaliseGeotiffByYearDiff) => {
-      this.dataGraficoMediaAnomalia = {
-        labels: this.apiFlask.convertToArray(data.mes),
-        datasets: [
-          {
-            label: 'Diferença Média ' + this.start.getFullYear() + ' - ' + this.end.getFullYear() +' do Município de ' +
-              this.citySelectedAPI.nome1 +
-              " - " +
-              this.ufSelectedAPI.estado,
-            backgroundColor: this.apiFlask.convertToColors(data.var_media),
-            borderColor: this.apiFlask.convertToColors(data.var_media),
-            data: this.apiFlask.convertToArray(data.var_media)
-          }
-        ]
-      };
-      this.dataGraficoMaximaAnomalia = {
-        labels: this.apiFlask.convertToArray(data.mes),
-        datasets: [
-          {
-            label: 'Diferença Máxima ' + this.start.getFullYear() + ' - ' + this.end.getFullYear() +' do Município de ' +
-              this.citySelectedAPI.nome1 +
-              " - " +
-              this.ufSelectedAPI.estado,
-            backgroundColor: this.apiFlask.convertToColors(data.var_maxima),
-            borderColor: this.apiFlask.convertToColors(data.var_maxima),
-            data: this.apiFlask.convertToArray(data.var_maxima)
-          }
-        ]
-      };
+    this.apiFlask.getMonthlyMaxMeanDiffLimitDate(this.citySelectedAPI.geocodigo,this.start,this.end).subscribe( (data: AnaliseGeotiffDiffLimitDate) => {
+      switch(this.selectChartOption.value){
+        case 1:
+          this.chartData = {
+            labels: this.apiFlask.convertToArray(data.format_date),
+            datasets: [
+              {
+                label: 'Anomalia Média ' + this.start.getFullYear() + ' - ' + this.end.getFullYear() +' do Município de ' +
+                  this.citySelectedAPI.nome1 +
+                  " - " +
+                  this.ufSelectedAPI.estado,
+                backgroundColor: this.apiFlask.convertToColors(data.var_media),
+                borderColor: this.apiFlask.convertToColors(data.var_media),
+                data: this.apiFlask.convertToArray(data.var_media)
+              }
+            ]
+          };
+          break;
+        case 3:
+          this.chartData = {
+            labels: this.apiFlask.convertToArray(data.format_date),
+            datasets: [
+              {
+                label: 'Diferença Máxima ' + this.start.getFullYear() + ' - ' + this.end.getFullYear() +' do Município de ' +
+                  this.citySelectedAPI.nome1 +
+                  " - " +
+                  this.ufSelectedAPI.estado,
+                backgroundColor: this.apiFlask.convertToColors(data.var_maxima),
+                borderColor: this.apiFlask.convertToColors(data.var_maxima),
+                data: this.apiFlask.convertToArray(data.var_maxima)
+              }
+            ]
+          };
+          break;
+        default:
+          break;
+      }
     });
-    this.apiFlask.getMonthlyMaxMean(this.citySelectedAPI.geocodigo,this.start.getFullYear()).subscribe( (data: AnaliseGeotiffByYear) => {
-      this.dataGraficoMediaMensal = {
-        labels: this.apiFlask.convertToArray(data.mes),
-        datasets: [
-          {
-            label: 'Média Climatológica Mensal do Município de ' +
-              this.apiFlask.convertToArray(data.nome_municipio)[0].toString() +
-              " - " +
-              this.ufSelectedAPI.estado,
-            backgroundColor:'#007bff',
-            borderColor: '#55a7ff',
-            data: this.apiFlask.convertToArray(data.media)
-          },
-          {
-            label: 'Média ' + this.start.getFullYear() + ' - ' + this.end.getFullYear() +' Mensal do Município de ' +
-              this.apiFlask.convertToArray(data.nome_municipio)[0].toString() +
-              " - " +
-              this.ufSelectedAPI.estado,
-            backgroundColor:'#80bdff',
-            borderColor: '#9ecdff',
-            data: this.apiFlask.convertToArray(data.media_ano)
-          }
-        ]
-      };
-      this.dataGraficoMaximaMensal = {
-        labels: this.apiFlask.convertToArray(data.mes),
-        datasets: [
-          {
-            label: 'Máxima Climatológica Mensal do Município de ' + 
-              this.apiFlask.convertToArray(data.nome_municipio)[0].toString() +
-              " - " +
-              this.ufSelectedAPI.estado,
-            backgroundColor: '#007bff',
-            borderColor: '#55a7ff',
-            data: this.apiFlask.convertToArray(data.maxima)
-          },
-          {
-            label: 'Máxima ' + this.start.getFullYear() + ' - ' + this.end.getFullYear() +' Mensal do Município de ' + 
-              this.apiFlask.convertToArray(data.nome_municipio)[0].toString() +
-              " - " +
-              this.ufSelectedAPI.estado,
-            backgroundColor: '#80bdff',
-            borderColor: '#9ecdff',
-            data: this.apiFlask.convertToArray(data.maxima_ano)
-          }
-        ]
-      };
+    this.apiFlask.getMonthlyMaxMeanLimitDate(this.citySelectedAPI.geocodigo,this.start,this.end).subscribe( (data: AnaliseGeotiffLimitDate) => {
+      switch(this.selectChartOption.value){
+        case 0:
+          this.chartData = {
+            labels: this.apiFlask.convertToArray(data.format_date),
+            datasets: [
+              {
+                label: 'Média Climatológica Mensal do Município de ' +
+                  this.apiFlask.convertToArray(data.nome_municipio)[0].toString() +
+                  " - " +
+                  this.ufSelectedAPI.estado,
+                backgroundColor:'#007bff',
+                borderColor: '#55a7ff',
+                data: this.apiFlask.convertToArray(data.media)
+              },
+              {
+                label: 'Média ' + this.start.getFullYear() + ' - ' + this.end.getFullYear() +' Mensal do Município de ' +
+                  this.apiFlask.convertToArray(data.nome_municipio)[0].toString() +
+                  " - " +
+                  this.ufSelectedAPI.estado,
+                backgroundColor:'#80bdff',
+                borderColor: '#9ecdff',
+                data: this.apiFlask.convertToArray(data.media_ano)
+              }
+            ]
+          };
+          break;
+        case 2:
+          this.chartData = {
+            labels: this.apiFlask.convertToArray(data.format_date),
+            datasets: [
+              {
+                label: 'Máxima Climatológica Mensal do Município de ' + 
+                  this.apiFlask.convertToArray(data.nome_municipio)[0].toString() +
+                  " - " +
+                  this.ufSelectedAPI.estado,
+                backgroundColor: '#007bff',
+                borderColor: '#55a7ff',
+                data: this.apiFlask.convertToArray(data.maxima)
+              },
+              {
+                label: 'Máxima ' + this.start.getFullYear() + ' - ' + this.end.getFullYear() +' Mensal do Município de ' + 
+                  this.apiFlask.convertToArray(data.nome_municipio)[0].toString() +
+                  " - " +
+                  this.ufSelectedAPI.estado,
+                backgroundColor: '#80bdff',
+                borderColor: '#9ecdff',
+                data: this.apiFlask.convertToArray(data.maxima_ano)
+              }
+            ]
+          };
+          break;
+        default:
+          break;
+      }
     });
-
-
-    this.changeChartType();
   }
 
   initDate() {
@@ -322,7 +327,6 @@ export class MapComponent implements OnInit {
 
     this.map.on('click', function(event){
       this.mouseCoordinate = olProj.transform(event.coordinate, 'EPSG:3857', 'EPSG:4326');
-      console.log("4326 Lat: " + this.mouseCoordinate[0] + " Long: " + this.mouseCoordinate[1]);
     });
 
     var layersWMS = this.layers;
@@ -340,7 +344,6 @@ export class MapComponent implements OnInit {
         }
       }
       if(url){
-        console.log(url);
         document.getElementById('info').innerHTML = '<iframe id = "infoFrame" seamless src = "' + url + '"></iframe>';
       }
     });
@@ -357,9 +360,7 @@ export class MapComponent implements OnInit {
       mapAuxiliar.getTargetElement().style.cursor = hit ? 'pointer' : '';
     });
 
-    function changeMap() {
-      console.log('name');
-    }
+    function changeMap() { }
     this.baseLayers.setBaseLayers(this.setMap);
   }
 
@@ -392,25 +393,6 @@ export class MapComponent implements OnInit {
         ]
       }
     ];
-  }
-
-  private changeChartType(){
-    switch(this.selectChartOption.value){
-      case 0:
-        this.chartData = this.dataGraficoMediaMensal
-        break;
-      case 1:
-        this.chartData = this.dataGraficoMediaAnomalia
-        break;
-      case 2:
-        this.chartData = this.dataGraficoMaximaMensal
-        break;
-      case 3:
-        this.chartData = this.dataGraficoMaximaAnomalia
-        break;
-      default:
-        break;
-    }
   }
 
   private setLayerType(){
@@ -447,7 +429,6 @@ export class MapComponent implements OnInit {
     for (var i = 5; i < layers.length; i++) {
       var element = gruplayers.item(i);
       var name = element.get('title');
-      console.log(name);
     }
   }
 
@@ -456,11 +437,9 @@ export class MapComponent implements OnInit {
     this.mapG.setView(new View({
       center: cord, zoom: 12, projection: 'EPSG:4326'
     }));
-    console.log(cord);
   }
 
   private configSelectDataGrafico(){
-    console.log(this.ufSelectedAPI.uf);
     this.citiesAPI = [];
     this.apiFlask.getCities(this.ufSelectedAPI.uf).subscribe( (data: CityByState) => {
       this.citiesAPI = this.apiFlask.convertToCityAPI(

@@ -6,7 +6,7 @@ merge_monthly.maxima as maxima,
 merge_monthly.media as media,
 monthly.ano as ano,
 merge_monthly.mes as mes,
-monthly.mes || '/' || monthly.ano as format_data
+monthly.mes || '/' || monthly.ano as format_date
 FROM public.an_municip_monthly_dynamic monthly, public.an_municip_monthly merge_monthly
 WHERE TO_DATE('{mes_inicio}/{ano_inicio}','MM/YYYY') <= monthly.execution_date
 AND monthly.execution_date <= TO_DATE('{mes_fim}/{ano_fim}','MM/YYYY')

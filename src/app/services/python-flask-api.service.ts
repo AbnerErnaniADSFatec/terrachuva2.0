@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AnaliseGeotiffByYearDiff } from '../map/rasters/analise-geotiff-by-year-diff';
 import { AnaliseGeotiffByYear } from '../map/rasters/analise-geotiff-by-year';
+import { AnaliseGeotiffLimitDate } from '../map/rasters/analise-geotiff-limit-date';
+import { AnaliseGeotiffDiffLimitDate } from '../map/rasters/analise-geotiff-diff-limit-date';
 import { AnaliseGeotiff } from '../map/rasters/analise-geotiff';
 import { CityByState } from '../map/entities/city-by-state';
 import { State } from '../map/entities/state';
@@ -13,12 +15,24 @@ import { CityByStateUnique } from '../map/entities/city-by-state-unique';
 })
 
 export class PythonFlaskAPIService{
-  private localhost = 'http://localhost:4863';
+  private localhost = 'http://150.163.17.147:4863';
   private colors = {'blue':'#007bff','red':'#ff2f00'};
   constructor( private httpClient: HttpClient ) {}
 
   getMonthlyMaxMean(geocodigo: string, ano: number){
     return this.httpClient.get<AnaliseGeotiffByYear>(this.localhost + '/an_monthly/' + geocodigo + '/' + ano.toString());
+  }
+
+  getMonthlyMaxMeanLimitDate(geocodigo: string, start: Date, end: Date){
+    return this.httpClient.get<AnaliseGeotiffLimitDate>(
+      this.localhost +
+      '/an_monthly_limit_date/' +
+      geocodigo + '/' +
+      (start.getMonth() + 1) + '/' +
+      start.getFullYear() + '/' +
+      (end.getMonth() + 1) + '/' +
+      end.getFullYear()
+    );
   }
 
   getMergeMonthlyMaxMean(geocodigo: string){
@@ -27,6 +41,18 @@ export class PythonFlaskAPIService{
 
   getMergeMonthlyMaxMeanDiff(geocodigo: string, ano: number){
     return this.httpClient.get<AnaliseGeotiffByYearDiff>(this.localhost + '/an_merge_monthly_diff/' + geocodigo + '/' + ano.toString());
+  }
+
+  getMonthlyMaxMeanDiffLimitDate(geocodigo: string, start: Date, end: Date){
+    return this.httpClient.get<AnaliseGeotiffDiffLimitDate>(
+      this.localhost +
+      '/an_monthly_diff_limit_date/' +
+      geocodigo + '/' +
+      (start.getMonth() + 1) + '/' +
+      start.getFullYear() + '/' +
+      (end.getMonth() + 1) + '/' +
+      end.getFullYear()
+    );
   }
 
   getCities(uf: string){

@@ -6,5 +6,4 @@ export interface AnaliseGeotiffByYear {
     media_ano: number[];
     mes: string[];
     nome_municipio: string[];
-    format_data: string[];
 }

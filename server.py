@@ -80,6 +80,25 @@ class An_Merge_Monthly_Diff(Resource):
         except:
             return jsonify({ 'info' : 'Impossível ler o geocodigo {}'.format(str(geocodigo)) })
 
+class An_Monthly_Diff_Limit_Date(Resource):
+    def get(self,geocodigo,mes_inicio,ano_inicio,mes_fim,ano_fim):
+        try:
+            conectar = Connection_pg("merge_monthly")
+            data = conectar.readFileSQL(
+                "sql/an_monthly_diff_limit_date",
+                {
+                    "geocodigo":str(geocodigo),
+                    "mes_inicio":str(mes_inicio),
+                    "ano_inicio":str(ano_inicio),
+                    "mes_fim":str(int(mes_fim) + 1),
+                    "ano_fim":str(ano_fim)
+                }
+            )
+            print(data)
+            return jsonify(data.to_dict())
+        except:
+            return jsonify({ 'info' : 'Impossível ler o geocodigo {}'.format(str(geocodigo)) })
+
 class CitiesByState(Resource):
     def get(self, uf):
         try:
@@ -103,6 +122,7 @@ api.add_resource(An_Monthly, '/an_monthly/<geocodigo>/<ano>')
 api.add_resource(An_Monthly_Limit_Date, '/an_monthly_limit_date/<geocodigo>/<mes_inicio>/<ano_inicio>/<mes_fim>/<ano_fim>')
 api.add_resource(An_Merge_Monthly, '/an_merge_monthly/<geocodigo>')
 api.add_resource(An_Merge_Monthly_Diff, '/an_merge_monthly_diff/<geocodigo>/<ano>')
+api.add_resource(An_Monthly_Diff_Limit_Date, '/an_monthly_diff_limit_date/<geocodigo>/<mes_inicio>/<ano_inicio>/<mes_fim>/<ano_fim>')
 api.add_resource(CitiesByState, '/cities/<uf>')
 api.add_resource(States, '/states')
 
