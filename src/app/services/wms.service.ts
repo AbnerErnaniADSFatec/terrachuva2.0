@@ -36,6 +36,19 @@ export class WmsService {
     return this.features;
   }
 
+  private bissexto(ano:number){
+    if (ano % 400 == 0){
+      return true;
+    }
+    else {
+      if(ano % 4 == 0 && ano % 100 != 0) {
+        return true;
+      } else {
+        return false;
+     }
+    }
+  }
+
   getRecort(tileLayer:TileLayer, param: string, value:string){
     tileLayer.getSource().updateParams({ 'cql_filter' : (param + '=').concat(value)});
   }
@@ -45,6 +58,9 @@ export class WmsService {
   }
 
   upDateMonth(tileLayer:TileLayer, date: Date){
-    tileLayer.getSource().updateParams({'TIME' : date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()});
+    let data = [31,0,31,30,31,30,31,31,30,31,30,31]
+    if ( this.bissexto(date.getFullYear()) ) { data[1] = 29; }
+    else { data[1] = 28; } 
+    tileLayer.getSource().updateParams({'TIME' : date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + data[date.getMonth()]});
   }
 }

@@ -58,15 +58,9 @@ export class MapComponent implements OnInit {
   private layers = [];
   private features = [];
 
-  private dataGraficoMedia = { 
-    "Mensal": NaN,
-    "Anomalia": NaN
-  };
-
-  private dataGraficoMáxima = { 
-    "Mensal": NaN,
-    "Anomalia": NaN
-  };
+  // Busca de dados para as camadas merge e monthly
+  private merge_date: Date = new Date(2018,0,31);
+  private monthly_date: Date = new Date(2015,0,31);
 
   // Busca de cidades via codigo no python API
   private citySelectedAPI: CityByStateUnique;
@@ -95,7 +89,7 @@ export class MapComponent implements OnInit {
 
   // Controle do gráfico
   private start: Date = new Date(2015,0,1);
-  private end: Date = new Date(2015,0,1);
+  private end: Date = new Date(2015,11,1);
   private analysis = new TileLayer({
     title : "Análise Merge Monthly",
     visible: true,
@@ -269,8 +263,8 @@ export class MapComponent implements OnInit {
     ];
     this.layersDynamic = [
       new Layer(4, "Preciptação", "OBT DPI", 'terrama2_3:view3','4326', this.geoserver20Chuva),
-      new Layer(5, "Análise Merge Monthly", "OBT DPI", 'terrama2_87:view87','4326', this.geoserverTerraMaLocal),
-      new Layer(6, "Análise Monthly", "OBT DPI", 'terrama2_88:view88','4326', this.geoserverTerraMaLocal)
+      new Layer(5, "Dados Climatológicos", "OBT DPI", 'terrama2_15:view15','4326', this.geoserver20Chuva),
+      new Layer(6, "Análise Mensal 1998 - 2019", "OBT DPI", 'terrama2_88:view88','4326', this.geoserverTerraMaLocal)
     ];
     this.layers = this.layers.concat(this.layersStatic);
     this.layers = this.layers.concat(this.layersDynamic);
@@ -406,6 +400,11 @@ export class MapComponent implements OnInit {
     for ( let layer of this.layers ){
       this.wmsService.upDate(layer.getTileLayer(),layer.date);
     }
+  }
+
+  setLayerTimeAnalysis() {
+    this.wmsService.upDateMonth(this.layers[4].getTileLayer(),this.merge_date);
+    this.wmsService.upDateMonth(this.layers[5].getTileLayer(),this.monthly_date);
   }
 
   private setMapType() {
