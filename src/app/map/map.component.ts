@@ -90,25 +90,6 @@ export class MapComponent implements OnInit {
   // Controle do gráfico
   private start: Date = new Date(2015,0,1);
   private end: Date = new Date(2015,11,1);
-  private analysis = new TileLayer({
-    title : "Análise Merge Monthly",
-    visible: true,
-    source: new TileWMS({
-      url: this.geoserverTerraMaLocal,
-      params: {
-        'LAYERS': 'terrama2_87:view87',
-        'VERSION': '1.1.1',
-        'FORMAT': 'image/png',
-        'EPSG': '4326',
-        'TILED': true,
-        'TIME' : '2018-01-31'
-      },
-      preload: Infinity,
-      projection: 'EPSG:4326',
-      serverType: 'geoserver',
-      name: 'terrama2_87:view87'
-    })
-  });
 
   // Banco de dados
   private jsonObj;
@@ -144,22 +125,24 @@ export class MapComponent implements OnInit {
   }
 
   initDadosGrafico() {
-    this.setViewMapG();
-    this.wmsService.getRecort(this.analysis,'geocodigo',this.citySelectedAPI.geocodigo);
-    let days = [31,28,31,30,31,30,31,31,30,31,30,31];
-    this.start.setDate(days[this.start.getMonth()]);
-    this.wmsService.upDate(this.analysis,this.start);
+    this.setViewMap();
+    this.wmsService.getRecort(this.layers[5].getTileLayer(),'geocodigo',this.citySelectedAPI.geocodigo);
     this.apiFlask.getMonthlyMaxMeanDiffLimitDate(this.citySelectedAPI.geocodigo,this.start,this.end).subscribe( (data: AnaliseGeotiffDiffLimitDate) => {
+      let chartLabel = (
+        'Anomalia Média ' +
+        this.wmsService.getVerboseMonth(this.start) + '/' + this.start.getFullYear() + ' - ' +
+        this.wmsService.getVerboseMonth(this.end) + '/' + this.end.getFullYear() +
+        ' do Município de ' +
+        this.citySelectedAPI.nome1 + ' - ' +
+        this.ufSelectedAPI.estado
+      );
       switch(this.selectChartOption.value){
         case 1:
           this.chartData = {
             labels: this.apiFlask.convertToArray(data.format_date),
             datasets: [
               {
-                label: 'Anomalia Média ' + this.start.getFullYear() + ' - ' + this.end.getFullYear() +' do Município de ' +
-                  this.citySelectedAPI.nome1 +
-                  " - " +
-                  this.ufSelectedAPI.estado,
+                label: chartLabel,
                 backgroundColor: this.apiFlask.convertToColors(data.var_media),
                 borderColor: this.apiFlask.convertToColors(data.var_media),
                 data: this.apiFlask.convertToArray(data.var_media)
@@ -172,10 +155,7 @@ export class MapComponent implements OnInit {
             labels: this.apiFlask.convertToArray(data.format_date),
             datasets: [
               {
-                label: 'Diferença Máxima ' + this.start.getFullYear() + ' - ' + this.end.getFullYear() +' do Município de ' +
-                  this.citySelectedAPI.nome1 +
-                  " - " +
-                  this.ufSelectedAPI.estado,
+                label: chartLabel,
                 backgroundColor: this.apiFlask.convertToColors(data.var_maxima),
                 borderColor: this.apiFlask.convertToColors(data.var_maxima),
                 data: this.apiFlask.convertToArray(data.var_maxima)
@@ -188,25 +168,31 @@ export class MapComponent implements OnInit {
       }
     });
     this.apiFlask.getMonthlyMaxMeanLimitDate(this.citySelectedAPI.geocodigo,this.start,this.end).subscribe( (data: AnaliseGeotiffLimitDate) => {
+      let chartLabel = (
+        'Climatológica Mensal do Município de ' +
+        this.apiFlask.convertToArray(data.nome_municipio)[0].toString() + ' - ' +
+        this.ufSelectedAPI.estado
+      );
+      let chartLabelDate = (
+        this.wmsService.getVerboseMonth(this.start) + '/' + this.start.getFullYear() + ' - ' +
+        this.wmsService.getVerboseMonth(this.end) + '/' + this.end.getFullYear() +
+        ' Mensal do Município de ' + 
+        this.apiFlask.convertToArray(data.nome_municipio)[0].toString() + ' - ' +
+        this.ufSelectedAPI.estado
+      );
       switch(this.selectChartOption.value){
         case 0:
           this.chartData = {
             labels: this.apiFlask.convertToArray(data.format_date),
             datasets: [
               {
-                label: 'Média Climatológica Mensal do Município de ' +
-                  this.apiFlask.convertToArray(data.nome_municipio)[0].toString() +
-                  " - " +
-                  this.ufSelectedAPI.estado,
+                label: 'Média ' + chartLabel,
                 backgroundColor:'#007bff',
                 borderColor: '#55a7ff',
                 data: this.apiFlask.convertToArray(data.media)
               },
               {
-                label: 'Média ' + this.start.getFullYear() + ' - ' + this.end.getFullYear() +' Mensal do Município de ' +
-                  this.apiFlask.convertToArray(data.nome_municipio)[0].toString() +
-                  " - " +
-                  this.ufSelectedAPI.estado,
+                label: 'Média ' + chartLabelDate,
                 backgroundColor:'#80bdff',
                 borderColor: '#9ecdff',
                 data: this.apiFlask.convertToArray(data.media_ano)
@@ -219,19 +205,13 @@ export class MapComponent implements OnInit {
             labels: this.apiFlask.convertToArray(data.format_date),
             datasets: [
               {
-                label: 'Máxima Climatológica Mensal do Município de ' + 
-                  this.apiFlask.convertToArray(data.nome_municipio)[0].toString() +
-                  " - " +
-                  this.ufSelectedAPI.estado,
+                label: 'Máxima ' + chartLabel,
                 backgroundColor: '#007bff',
                 borderColor: '#55a7ff',
                 data: this.apiFlask.convertToArray(data.maxima)
               },
               {
-                label: 'Máxima ' + this.start.getFullYear() + ' - ' + this.end.getFullYear() +' Mensal do Município de ' + 
-                  this.apiFlask.convertToArray(data.nome_municipio)[0].toString() +
-                  " - " +
-                  this.ufSelectedAPI.estado,
+                label: 'Máxima ' + chartLabelDate,
                 backgroundColor: '#80bdff',
                 borderColor: '#9ecdff',
                 data: this.apiFlask.convertToArray(data.maxima_ano)
@@ -268,6 +248,8 @@ export class MapComponent implements OnInit {
     ];
     this.layers = this.layers.concat(this.layersStatic);
     this.layers = this.layers.concat(this.layersDynamic);
+    this.wmsService.upDate(this.layers[4].getTileLayer(),this.merge_date);
+    this.wmsService.upDate(this.layers[5].getTileLayer(),this.monthly_date);
   }
 
   initState(){
@@ -287,8 +269,7 @@ export class MapComponent implements OnInit {
           baseLayer: true,
           source: new OSM(),
           layer: 'osm',
-        }),
-        this.analysis
+        })
       ],
       target: 'mapG',
       view: new View({
@@ -431,9 +412,12 @@ export class MapComponent implements OnInit {
     }
   }
 
-  private setViewMapG() {
+  private setViewMap() {
     let cord = [this.citySelectedAPI.longitude, this.citySelectedAPI.latitude];
     this.mapG.setView(new View({
+      center: cord, zoom: 12, projection: 'EPSG:4326'
+    }));
+    this.map.setView(new View({
       center: cord, zoom: 12, projection: 'EPSG:4326'
     }));
   }

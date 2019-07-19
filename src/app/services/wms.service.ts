@@ -63,4 +63,9 @@ export class WmsService {
     else { data[1] = 28; } 
     tileLayer.getSource().updateParams({'TIME' : date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + data[date.getMonth()]});
   }
+
+  getVerboseMonth(date: Date){
+    let meses = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return meses[date.getMonth()];
+  }
 }
