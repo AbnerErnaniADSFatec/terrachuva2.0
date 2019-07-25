@@ -46,7 +46,6 @@ import { OSM } from 'ol/source.js';
 })
 
 export class MapComponent implements OnInit {
-  private geoserverTerraMaLocal = 'http://localhost:8080/geoserver/wms?';
   private geoserver20Chuva = 'http://www.terrama2.dpi.inpe.br/chuva/geoserver/wms?';
 
   private map;
@@ -59,7 +58,7 @@ export class MapComponent implements OnInit {
 
   // Busca de dados para as camadas merge e monthly
   private merge_date: Date = new Date(2018,0,31);
-  private monthly_date: Date = new Date(2015,0,31);
+  private monthly_date: Date = new Date(1998,0,31);
 
   // Busca de cidades via codigo no python API
   private citySelectedAPI: CityByStateUnique;
@@ -87,8 +86,8 @@ export class MapComponent implements OnInit {
   maxDate: Date;
 
   // Controle do gráfico
-  private start: Date = new Date(2015,0,1);
-  private end: Date = new Date(2015,11,1);
+  private start: Date = new Date(1998,0,1);
+  private end: Date = new Date(1998,1,28);
 
   // Banco de dados
   private jsonObj;
@@ -245,7 +244,7 @@ export class MapComponent implements OnInit {
     this.layersDynamic = [
       new Layer(4, "Preciptação", "OBT DPI", 'terrama2_3:view3','4326', this.geoserver20Chuva),
       new Layer(5, "Dados Climatológicos", "OBT DPI", 'terrama2_15:view15','4326', this.geoserver20Chuva),
-      new Layer(6, "Análise Mensal 1998 - 2019", "OBT DPI", 'terrama2_88:view88','4326', this.geoserverTerraMaLocal)
+      new Layer(6, "Análise Mensal 1998 - 2019", "OBT DPI", 'terrama2_26:view26','4326', this.geoserver20Chuva)
     ];
     this.layers = this.layers.concat(this.layersStatic);
     this.layers = this.layers.concat(this.layersDynamic);
