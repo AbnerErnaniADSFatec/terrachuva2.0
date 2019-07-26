@@ -87,7 +87,7 @@ export class MapComponent implements OnInit {
 
   // Controle do gráfico
   private start: Date = new Date(1998,0,1);
-  private end: Date = new Date(1998,1,28);
+  private end: Date = new Date(1998,8,31);
 
   // Banco de dados
   private jsonObj;
