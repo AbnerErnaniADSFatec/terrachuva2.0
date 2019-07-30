@@ -10,8 +10,7 @@ monthly.ano as ano,
 merge_monthly.mes as mes,
 monthly.mes || '/' || monthly.ano as format_date
 FROM public.an_municipio_monthly monthly, public.an_municipio_merge_monthly merge_monthly
-WHERE TO_DATE('{mes_inicio}/{ano_inicio}','MM/YYYY') <= monthly.execution_date
-AND monthly.execution_date <= TO_DATE('{mes_fim}/{ano_fim}','MM/YYYY')
+WHERE monthly.execution_date BETWEEN TO_DATE('{mes_inicio}/{ano_inicio}','MM/YYYY') AND TO_DATE('{mes_fim}/{ano_fim}','MM/YYYY')
 AND monthly.geocodigo = '{geocodigo}'
 AND monthly.geocodigo = merge_monthly.geocodigo
 AND monthly.mes = merge_monthly.mes
