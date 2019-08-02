@@ -238,60 +238,9 @@
     <div id = "legenda">&nbsp;</div>
 </p-sidebar>
 
-<p-sidebar [(visible)] = "analise_bar"  [style] = "{width:'60em'}" [fullScreen] = "false"  [baseZIndex] = "10000">
-<!-- <p-sidebar [(visible)] = "analise_bar" [fullScreen] = "true"  [baseZIndex] = "10000"> -->
+<!-- <p-sidebar [(visible)] = "analise_bar" [style] = "{width:'60em'}" [fullScreen] = "false"  [baseZIndex] = "10000"> -->
+<p-sidebar [(visible)] = "analise_bar" [fullScreen] = "true"  [baseZIndex] = "10000">
     <h4 style = "font-weight:normal">Busca de Dados</h4>
-    <!-- <div class = "ui-g">
-        <div class = "ui-g-2">
-            <h6 style = "font-weight:normal">Data Início</h6>
-            <p-calendar 
-                [(ngModel)] = "start"
-                [showIcon] = "true"
-                view = "month"
-                dateFormat = "MM / yy"
-            ></p-calendar>
-        </div>
-        <div class = "ui-g-2">
-            <h6 style = "font-weight:normal">Data Fim</h6>
-            <p-calendar
-                [(ngModel)] = "end"
-                [showIcon] = "true"
-                view = "month"
-                dateFormat = "MM / yy"
-            ></p-calendar>
-        </div>
-        <div class = "ui-g-2">
-            <h6 style = "font-weight: normal">Estado</h6>
-            <p-dropdown [options] = "ufsAPI" (onChange) = "configSelectDataGrafico()" [(ngModel)] = "ufSelectedAPI" placeholder = "Select a State" optionLabel = "estado" [showClear] = "true" [filter] = "true"></p-dropdown>
-        </div>
-        <div class = "ui-g-2">
-            <h6 style = "font-weight: normal">Cidade</h6>
-            <p-dropdown [options] = "citiesAPI" [(ngModel)] = "citySelectedAPI" placeholder = "Select a City" optionLabel = "nome1" [showClear] = "true" [filter] = "true"></p-dropdown>
-        </div>
-        <div class = "ui-g-2">
-            <h6 style = "font-weight: normal">Variável</h6>
-            <p-dropdown [options] = "chartOption" [(ngModel)] = "selectChartOption" placeholder = "Select a Option" optionLabel = "verbose" [showClear] = "true"></p-dropdown>
-        </div>
-        <div class = "ui-g-2">
-            <button pButton type = "button" (click) = "setViewMapG()" label = "Buscar" class = "ui-button-success"></button>
-            <button pButton type = "button" (click) = "analise_bar = false" label = "Fechar" class = "ui-button-secondary"></button>
-        </div>
-        <div class = "ui-g-2">
-            <button pButton type = "button" (click) = "initDadosGrafico()" label = "Validar" class = "ui-button-success"></button>
-        </div>
-    </div>
-    <div class = "p-grid">
-        <div class = "p-col-8">
-            <div class = "p-grid">
-                <div class = "p-col-12">
-                    <p-chart type = "bar" height = "350" [responsive] = "true" [data] = "chartData"></p-chart>
-                </div>
-            </div>
-        </div>
-        <div class = "p-col-4">
-            <div id = "mapG"  class = "mapG"></div>
-        </div>
-    </div> -->
     <div class = "p-grid">
         <div class = "p-col-6">
             <div class = "p-col">
