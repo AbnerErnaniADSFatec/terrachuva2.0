@@ -32,6 +32,7 @@ class Connection_pg:
         try:
             sql_command = (" ".join(open(arquivo + '.sql', 'r').read().split('\n'))).format(**mapping)
             data_frame = pd.read_sql(sql_command, self.connection)
+            self.connection.commit()
             print("Leitura feita com sucesso : " + sql_command)
             return data_frame
         except:
@@ -64,6 +65,7 @@ class Connection_pg:
         return self.cursor
     
     def closeAll(self):
+        self.connection.commit()
         self.getConn().close()
         self.getCursor().close()
         print("Conexão finalizada!")
